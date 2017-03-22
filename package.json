@@ -1,7 +1,12 @@
 {
   "name": "nre",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.1",
+  "description": "npm 快速更换 命令行工具",
+  "bin": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LastKing/nre"
+  },
   "author": "toonew",
   "license": "MIT",
   "dependencies": {
