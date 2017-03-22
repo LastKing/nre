@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 /**
+ * 需要注意
+ * 1.如果是作为命令行工具 ，需要第一行 类似 shell声明的语句
+ * 2.在 package.json中 对包的类型  进行声明
+ *    默认一般库为  main :  index.js
+ *    命令行工具库  bin  : ./index.js
  * Created by toonew on 2017/3/22.
  */
 const path = require('path');
@@ -7,31 +12,31 @@ const fs = require('fs');
 
 const npm = require('npm');
 
+const program = require('commander');//最重要的 命令行扩展工具
 const extend = require('extend');
-const program = require('commander');
 const ini = require('ini');
 
 const PKG = require('./package.json');
 const registries = require('./registries.json');
-const NRMRC = path.join(process.env.HOME, '.nrmrc');
+const NRERC = path.join(process.env.HOME, '.nrerc');
 
 program
-  .version(PKG.version);
+  .version(PKG.version); //输出版本信息
 
 program
   .command('ls')
-  .description('List all the registries')
-  .action(onList);
+  .description('List all the registries')    //help 显示用的数据
+  .action(onList);      //显示所有能更换的源
 
 program
   .command('current')
   .description('Show current registry name')
-  .action(showCurrent);
+  .action(showCurrent); //显示当前的源是xxx
 
 program
   .command('use <registry>')
   .description('Change registry to registry')
-  .action(onUse);
+  .action(onUse);       //更换源
 
 program
   .command('help')
@@ -39,7 +44,6 @@ program
   .action(function () {
     program.outputHelp();
   });
-
 
 program
   .parse(process.argv);
@@ -78,6 +82,10 @@ function showCurrent() {
   });
 }
 
+/**
+ * 更换源的操作
+ * @param name 更换的源的名字
+ */
 function onUse(name) {
   var allRegistries = getAllRegistry();
   if (allRegistries.hasOwnProperty(name)) {
@@ -104,19 +112,19 @@ function onUse(name) {
 /*//////////////// helper methods /////////////////*/
 
 /*
- * get current registry
+ * 获取当前的源地址 get current registry
  */
 function getCurrentRegistry(cbk) {
   npm.load(function (err, conf) {
     if (err) return exit(err);
-    cbk(npm.config.get('registry'));
+    cbk(npm.config.get('registry')); //这里 如果直接写conf,会多出来两个undefined  。。不明白
   });
 }
 
 function getCustomRegistry() {
-  return fs.existsSync(NRMRC) ? ini.parse(fs.readFileSync(NRMRC, 'utf-8')) : {};
+  //这里 是增加自定义的源，但是我没有自定义源 ，所以暂时无用
+  return fs.existsSync(NRERC) ? ini.parse(fs.readFileSync(NRERC, 'utf-8')) : {};
 }
-
 
 function getAllRegistry() {
   return extend({}, registries, getCustomRegistry());
