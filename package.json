@@ -2,7 +2,9 @@
   "name": "nre",
   "version": "1.0.2",
   "description": "npm 快速更换 命令行工具",
-  "bin": "./index.js",
+  "bin": {
+    "nre2": "./index.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/LastKing/nre"
